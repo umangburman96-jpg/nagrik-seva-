@@ -38,6 +38,7 @@ const upload = multer({
   },
 });
 app.use("/uploads", express.static(uploadDir));
+app.use(express.static(path.join(__dirname, "public")));
 
 // ---------- Rate limiting ----------
 // Citizens can only file so many complaints per IP in a given window — stops spam/abuse
@@ -310,6 +311,9 @@ app.delete("/api/admin/complaints/:id", authRequired, (req, res) => {
 });
 
 app.get("/api/health", (req, res) => res.json({ ok: true }));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
 app.listen(PORT, () => {
   console.log(`GCMS backend running at http://localhost:${PORT}`);
