@@ -1,7 +1,3 @@
-/* ===================================================================
-   Nagrik Seva Grievance Portal — design tokens
-   Ink navy header, warm paper canvas, seal-gold accent, civic serif
-   =================================================================== */
 :root {
   --ink: #14213D;
   --ink-2: #223A5E;
@@ -35,7 +31,6 @@ body {
 
 h1, h2, h3 { font-family: var(--serif); color: var(--ink); margin: 0; }
 
-/* ===================== HEADER ===================== */
 .gov-header {
   background: var(--ink);
   color: var(--paper);
@@ -99,7 +94,6 @@ h1, h2, h3 { font-family: var(--serif); color: var(--ink); margin: 0; }
   border-bottom-color: var(--gold);
 }
 
-/* ===================== LAYOUT ===================== */
 .wrap {
   max-width: 900px;
   margin: 0 auto;
@@ -109,7 +103,6 @@ h1, h2, h3 { font-family: var(--serif); color: var(--ink); margin: 0; }
 .panel__intro h2 { font-size: 26px; margin-bottom: 8px; }
 .panel__intro p { color: var(--text-muted); font-size: 15px; }
 
-/* ===================== FORM ===================== */
 .form-step {
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
@@ -186,7 +179,6 @@ input:focus, select:focus, textarea:focus {
 .seg-btn:last-child { border-right: none; }
 .seg-btn.is-active { background: var(--ink); color: var(--white); }
 
-/* ---- evidence / camera ---- */
 .evidence { display: flex; flex-direction: column; gap: 12px; }
 .evidence__preview {
   position: relative;
@@ -211,7 +203,6 @@ input:focus, select:focus, textarea:focus {
 .evidence__controls { display: flex; flex-wrap: wrap; gap: 10px; }
 .evidence__hint { font-size: 12.5px; color: var(--text-muted); margin: 0; min-height: 16px; }
 
-/* ---- buttons ---- */
 .btn {
   font-family: var(--sans);
   font-size: 14px;
@@ -235,7 +226,6 @@ input:focus, select:focus, textarea:focus {
 .form-msg.error { color: var(--red); }
 .form-msg.ok { color: var(--green); }
 
-/* ---- confirmation card ---- */
 .confirm-card {
   margin-top: 24px;
   padding: 28px;
@@ -255,7 +245,6 @@ input:focus, select:focus, textarea:focus {
 }
 .confirm-card__note { font-size: 13px; color: #C9CFE0; margin-bottom: 18px; }
 
-/* ===================== TRACK ===================== */
 .track-form { display: flex; gap: 10px; margin-bottom: 24px; max-width: 480px; }
 .track-form input {
   flex: 1;
@@ -304,7 +293,6 @@ input:focus, select:focus, textarea:focus {
 .status-Resolved { background: #DCEEE3; color: var(--green); }
 .status-Rejected { background: #F3DEDA; color: var(--red); }
 
-/* ===================== ADMIN ===================== */
 .login-form { max-width: 340px; }
 .dash-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 22px; }
 .dash-head p { color: var(--text-muted); font-size: 13.5px; margin: 4px 0 0; }
@@ -380,7 +368,6 @@ input:focus, select:focus, textarea:focus {
   font-family: var(--sans);
 }
 
-/* ===================== LIGHTBOX ===================== */
 .lightbox {
   position: fixed; inset: 0; background: rgba(20,33,61,0.9);
   display: flex; align-items: center; justify-content: center;
@@ -394,7 +381,6 @@ input:focus, select:focus, textarea:focus {
   font-size: 30px; cursor: pointer; line-height: 1;
 }
 
-/* ===================== FOOTER ===================== */
 .gov-footer {
   border-top: 1px solid var(--line);
   padding: 18px 28px 40px;
@@ -402,7 +388,6 @@ input:focus, select:focus, textarea:focus {
 }
 .gov-footer p { font-size: 12.5px; color: var(--text-muted); margin: 0; }
 
-/* ===================== RESPONSIVE ===================== */
 @media (max-width: 640px) {
   .field-row { grid-template-columns: 1fr; }
   .stat-row { grid-template-columns: repeat(2, 1fr); }
@@ -410,7 +395,6 @@ input:focus, select:focus, textarea:focus {
   .gov-header__eyebrow { display: none; }
 }
 
-/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; scroll-behavior: auto !important; }
 }

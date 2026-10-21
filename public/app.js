@@ -1,7 +1,3 @@
-// app.js — Nagrik Seva Grievance Portal frontend logic
-// Uses whatever hostname the page was opened with (localhost, 127.0.0.1, or a LAN IP)
-// so it works the same way regardless of which one you use — as long as the backend
-// is running on port 5000 on that same machine.
 const API_BASE = `/api`;
 
 let adminToken = localStorage.getItem("gcms_token") || null;
@@ -9,9 +5,6 @@ let adminUsername = localStorage.getItem("gcms_admin") || null;
 let cameraStream = null;
 let capturedBlob = null;
 
-// ---------------------------------------------------------------
-// Tabs
-// ---------------------------------------------------------------
 const tabs = document.querySelectorAll(".gov-tab");
 const panels = document.querySelectorAll("[data-panel]");
 tabs.forEach((tab) => {
@@ -24,12 +17,6 @@ tabs.forEach((tab) => {
   });
 });
 
-// ---------------------------------------------------------------
-// API connection check (disabled)
-
-// ---------------------------------------------------------------
-// Priority segmented control
-// ---------------------------------------------------------------
 const segButtons = document.querySelectorAll("#prioritySegment .seg-btn");
 segButtons.forEach((btn) => {
   btn.addEventListener("click", () => {
@@ -39,9 +26,6 @@ segButtons.forEach((btn) => {
   });
 });
 
-// ---------------------------------------------------------------
-// Camera capture
-// ---------------------------------------------------------------
 const cameraFeed = document.getElementById("cameraFeed");
 const captureCanvas = document.getElementById("captureCanvas");
 const photoPreviewImg = document.getElementById("photoPreviewImg");
@@ -141,9 +125,6 @@ function resetEvidence() {
   fileUpload.value = "";
 }
 
-// ---------------------------------------------------------------
-// Location capture (for the complaint form)
-// ---------------------------------------------------------------
 const useLocationBtn = document.getElementById("useLocationBtn");
 const locationHint = document.getElementById("locationHint");
 
@@ -166,9 +147,6 @@ useLocationBtn.addEventListener("click", () => {
   );
 });
 
-// ---------------------------------------------------------------
-// Submit complaint
-// ---------------------------------------------------------------
 const complaintForm = document.getElementById("complaintForm");
 const formMsg = document.getElementById("formMsg");
 const submitBtn = document.getElementById("submitBtn");
@@ -224,9 +202,6 @@ document.getElementById("newComplaintBtn").addEventListener("click", () => {
   complaintForm.hidden = false;
 });
 
-// ---------------------------------------------------------------
-// Track complaint
-// ---------------------------------------------------------------
 const trackForm = document.getElementById("trackForm");
 const trackResult = document.getElementById("trackResult");
 
@@ -261,9 +236,6 @@ trackForm.addEventListener("submit", async (e) => {
   }
 });
 
-// ---------------------------------------------------------------
-// Admin: login
-// ---------------------------------------------------------------
 const loginForm = document.getElementById("loginForm");
 const loginMsg = document.getElementById("loginMsg");
 const adminLoginBlock = document.getElementById("adminLoginBlock");
@@ -337,9 +309,6 @@ async function authedFetch(url, options = {}) {
   return res;
 }
 
-// ---------------------------------------------------------------
-// Admin: stats
-// ---------------------------------------------------------------
 async function loadStats() {
   try {
     const res = await authedFetch(`${API_BASE}/admin/stats`);
@@ -359,9 +328,6 @@ async function loadStats() {
   }
 }
 
-// ---------------------------------------------------------------
-// Admin: complaint list
-// ---------------------------------------------------------------
 const complaintTableBody = document.getElementById("complaintTableBody");
 const searchInput = document.getElementById("searchInput");
 const filterStatus = document.getElementById("filterStatus");
@@ -438,15 +404,12 @@ function renderTable(rows) {
   });
 }
 
-// ---------------------------------------------------------------
-// Admin: complaint map
-// ---------------------------------------------------------------
 let complaintMap = null;
 let markerLayer = null;
 
 function initMap() {
   if (complaintMap || typeof L === "undefined") return;
-  complaintMap = L.map("complaintMap").setView([22.9734, 78.6569], 5); // India, default view
+  complaintMap = L.map("complaintMap").setView([22.9734, 78.6569], 5);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap contributors",
     maxZoom: 19,
@@ -479,7 +442,6 @@ function updateMap(rows) {
     complaintMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 14 });
   }
 
-  // Leaflet needs a nudge to size correctly right after its container becomes visible
   setTimeout(() => complaintMap.invalidateSize(), 200);
 }
 
@@ -492,9 +454,6 @@ document.getElementById("refreshBtn").addEventListener("click", () => {
   loadComplaints();
 });
 
-// ---------------------------------------------------------------
-// Admin: staff accounts
-// ---------------------------------------------------------------
 const staffTableBody = document.getElementById("staffTableBody");
 const addStaffForm = document.getElementById("addStaffForm");
 const staffMsg = document.getElementById("staffMsg");
@@ -564,9 +523,6 @@ addStaffForm.addEventListener("submit", async (e) => {
   }
 });
 
-// ---------------------------------------------------------------
-// Lightbox
-// ---------------------------------------------------------------
 const lightbox = document.getElementById("lightbox");
 const lightboxImg = document.getElementById("lightboxImg");
 function openLightbox(src) {
@@ -576,9 +532,6 @@ function openLightbox(src) {
 document.getElementById("lightboxClose").addEventListener("click", () => (lightbox.hidden = true));
 lightbox.addEventListener("click", (e) => { if (e.target === lightbox) lightbox.hidden = true; });
 
-// ---------------------------------------------------------------
-// Utilities
-// ---------------------------------------------------------------
 function escapeHtml(str) {
   const div = document.createElement("div");
   div.textContent = str ?? "";
@@ -597,5 +550,4 @@ function debounce(fn, ms) {
   };
 }
 
-// Init
 showAdminUi();

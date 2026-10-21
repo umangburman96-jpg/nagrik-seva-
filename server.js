@@ -1,4 +1,3 @@
-// server.js — Government Complaint Management System API
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -19,7 +18,6 @@ const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 
-// ---------- Uploads (camera photo or file) ----------
 const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
@@ -32,7 +30,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({
   storage,
-  limits: { fileSize: 8 * 1024 * 1024 }, // 8MB
+  limits: { fileSize: 8 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (/^image\/(jpeg|png|webp)$/.test(file.mimetype)) cb(null, true);
     else cb(new Error("Only JPEG, PNG or WEBP images are allowed"));
@@ -41,35 +39,30 @@ const upload = multer({
 app.use("/uploads", express.static(uploadDir));
 app.use(express.static(path.join(__dirname, "public")));
 
-// ---------- Rate limiting ----------
-// Citizens can only file so many complaints per IP in a given window — stops spam/abuse
 const complaintLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max: 5,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: "Too many complaints submitted from this device. Please try again in a while." },
 });
 
-// Slows down brute-force login attempts against staff accounts
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max: 10,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: "Too many login attempts. Please try again in a while." },
 });
 
-// A lighter general limit across the whole API as a safety net
 const generalLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
+  windowMs: 60 * 1000,
   max: 120,
   standardHeaders: true,
   legacyHeaders: false,
 });
 app.use("/api", generalLimiter);
 
-// ---------- Helpers ----------
 function makeTrackingId() {
   const year = new Date().getFullYear();
   const rand = crypto.randomBytes(3).toString("hex").toUpperCase();
@@ -88,7 +81,6 @@ function authRequired(req, res, next) {
   }
 }
 
-// ================= AUTH =================
 app.post("/api/auth/login", loginLimiter, (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) {
@@ -104,7 +96,6 @@ app.post("/api/auth/login", loginLimiter, (req, res) => {
   res.json({ token, username: admin.username });
 });
 
-// ================= PUBLIC: SUBMIT COMPLAINT =================
 app.post("/api/complaints", complaintLimiter, upload.single("photo"), (req, res) => {
   try {
     const {
@@ -168,7 +159,6 @@ app.post("/api/complaints", complaintLimiter, upload.single("photo"), (req, res)
   }
 });
 
-// ================= PUBLIC: TRACK COMPLAINT =================
 app.get("/api/complaints/track/:tracking_id", (req, res) => {
   const complaint = db
     .prepare("SELECT * FROM complaints WHERE tracking_id = ?")
@@ -182,7 +172,6 @@ app.get("/api/complaints/track/:tracking_id", (req, res) => {
   res.json({ ...complaint, history });
 });
 
-// ================= ADMIN: LIST / FILTER =================
 app.get("/api/admin/complaints", authRequired, (req, res) => {
   const { status, category, priority, search } = req.query;
   let sql = "SELECT * FROM complaints WHERE 1=1";
@@ -211,7 +200,6 @@ app.get("/api/admin/complaints", authRequired, (req, res) => {
   res.json(rows);
 });
 
-// ================= ADMIN: STATS =================
 app.get("/api/admin/stats", authRequired, (req, res) => {
   const total = db.prepare("SELECT COUNT(*) c FROM complaints").get().c;
   const byStatus = db
@@ -226,7 +214,6 @@ app.get("/api/admin/stats", authRequired, (req, res) => {
   res.json({ total, byStatus, byCategory, byPriority });
 });
 
-// ================= ADMIN: UPDATE STATUS =================
 app.patch("/api/admin/complaints/:id/status", authRequired, (req, res) => {
   const { status, note } = req.body || {};
   const valid = ["Submitted", "Under Review", "In Progress", "Resolved", "Rejected"];
@@ -248,8 +235,6 @@ app.patch("/api/admin/complaints/:id/status", authRequired, (req, res) => {
   res.json(updated);
 });
 
-// ================= ADMIN: STAFF ACCOUNTS =================
-// List every staff/admin account (password hashes never leave the server)
 app.get("/api/admin/admins", authRequired, (req, res) => {
   const rows = db
     .prepare("SELECT id, username, created_at FROM admins ORDER BY created_at ASC")
@@ -257,7 +242,6 @@ app.get("/api/admin/admins", authRequired, (req, res) => {
   res.json(rows);
 });
 
-// Add a new staff/admin account — any logged-in admin can add another
 app.post("/api/admin/admins", authRequired, (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) {
@@ -280,7 +264,6 @@ app.post("/api/admin/admins", authRequired, (req, res) => {
   res.status(201).json(created);
 });
 
-// Remove a staff/admin account — can't delete yourself or the last remaining account
 app.delete("/api/admin/admins/:id", authRequired, (req, res) => {
   const targetId = Number(req.params.id);
   if (targetId === req.admin.id) {
@@ -297,7 +280,6 @@ app.delete("/api/admin/admins/:id", authRequired, (req, res) => {
   res.json({ success: true });
 });
 
-// ================= ADMIN: DELETE =================
 app.delete("/api/admin/complaints/:id", authRequired, (req, res) => {
   const complaint = db.prepare("SELECT * FROM complaints WHERE id = ?").get(req.params.id);
   if (!complaint) return res.status(404).json({ error: "Complaint not found" });
