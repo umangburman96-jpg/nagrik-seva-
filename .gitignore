@@ -1,0 +1,14 @@
+# Secret keys and environment variables
+.env
+
+# Dependencies (ye bohot heavy hota hai, GitHub par nahi bhejna chahiye)
+node_modules/
+
+# Local database files
+complaints.db
+complaints.db-shm
+complaints.db-wal
+
+# User uploaded photos
+uploads/*
+!uploads/.gitkeep
