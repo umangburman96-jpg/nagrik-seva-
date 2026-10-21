@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nagrik Seva | Public Grievance &amp; Complaint Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="gov-header">
+  <div class="gov-header__inner">
+    <div class="gov-header__mark" aria-hidden="true">
+      <svg viewBox="0 0 48 48" width="40" height="40">
+        <circle cx="24" cy="24" r="22" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M24 8 L38 16 V24 C38 33 32 39 24 42 C16 39 10 33 10 24 V16 Z" fill="currentColor" opacity="0.12"/>
+        <path d="M24 8 L38 16 V24 C38 33 32 39 24 42 C16 39 10 33 10 24 V16 Z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <circle cx="24" cy="22" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      </svg>
+    </div>
+    <div class="gov-header__text">
+      <p class="gov-header__eyebrow">Municipal Public Services</p>
+      <h1 class="gov-header__title">Nagrik Seva Grievance Portal</h1>
+    </div>
+    <div class="gov-header__status" id="apiStatus">
+      <span class="dot" id="apiDot"></span>
+      <span id="apiStatusText">Checking connection…</span>
+    </div>
+  </div>
+  <nav class="gov-tabs" aria-label="Primary">
+    <button class="gov-tab is-active" data-tab="file">File a Complaint</button>
+    <button class="gov-tab" data-tab="track">Track Status</button>
+    <button class="gov-tab" data-tab="admin">Staff Login</button>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <!-- ===== FILE A COMPLAINT ===== -->
+  <section class="panel" id="panel-file" data-panel>
+    <div class="panel__intro">
+      <h2>Register a new grievance</h2>
+      <p>Fill in the details below. Attach a photo of the issue for faster verification — you can capture one directly from your camera or upload an existing image.</p>
+    </div>
+
+    <form id="complaintForm" class="form-grid" novalidate>
+
+      <fieldset class="form-step">
+        <legend><span class="step-no">1</span> Your details</legend>
+        <div class="field">
+          <label for="full_name">Full name<span class="req">*</span></label>
+          <input type="text" id="full_name" name="full_name" required placeholder="e.g. Ramesh Kumar" />
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="phone">Phone number<span class="req">*</span></label>
+            <input type="tel" id="phone" name="phone" required placeholder="10-digit mobile number" pattern="[0-9]{10}" />
+          </div>
+          <div class="field">
+            <label for="email">Email (optional)</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" />
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-step">
+        <legend><span class="step-no">2</span> Complaint details</legend>
+        <div class="field-row">
+          <div class="field">
+            <label for="department">Department<span class="req">*</span></label>
+            <select id="department" name="department" required>
+              <option value="">Select department</option>
+              <option>Sanitation &amp; Waste Management</option>
+              <option>Water Supply</option>
+              <option>Roads &amp; Infrastructure</option>
+              <option>Electricity</option>
+              <option>Public Health</option>
+              <option>Law &amp; Order</option>
+              <option>Parks &amp; Public Spaces</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="category">Category<span class="req">*</span></label>
+            <select id="category" name="category" required>
+              <option value="">Select category</option>
+              <option>Infrastructure Damage</option>
+              <option>Service Disruption</option>
+              <option>Sanitation Issue</option>
+              <option>Safety Hazard</option>
+              <option>Corruption / Misconduct</option>
+              <option>Noise / Nuisance</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="location">Location</label>
+          <div class="location-row">
+            <input type="text" id="location" name="location" placeholder="Area, street, landmark" />
+            <button type="button" class="btn btn--outline" id="useLocationBtn">Use my location</button>
+          </div>
+          <input type="hidden" id="latitude" name="latitude" />
+          <input type="hidden" id="longitude" name="longitude" />
+          <p class="evidence__hint" id="locationHint"></p>
+        </div>
+        <div class="field">
+          <label for="description">Description<span class="req">*</span></label>
+          <textarea id="description" name="description" rows="4" required placeholder="Describe the issue clearly — what, where, since when."></textarea>
+        </div>
+        <div class="field">
+          <label for="priority">Priority</label>
+          <div class="segmented" id="prioritySegment">
+            <button type="button" class="seg-btn" data-value="Low">Low</button>
+            <button type="button" class="seg-btn is-active" data-value="Normal">Normal</button>
+            <button type="button" class="seg-btn" data-value="High">High</button>
+            <button type="button" class="seg-btn" data-value="Urgent">Urgent</button>
+          </div>
+          <input type="hidden" id="priority" name="priority" value="Normal" />
+        </div>
+      </fieldset>
+
+      <fieldset class="form-step">
+        <legend><span class="step-no">3</span> Photo evidence (optional)</legend>
+        <div class="evidence">
+          <div class="evidence__preview" id="evidencePreview">
+            <video id="cameraFeed" playsinline autoplay muted></video>
+            <canvas id="captureCanvas" hidden></canvas>
+            <img id="photoPreviewImg" alt="Captured evidence preview" hidden />
+            <p class="evidence__placeholder" id="evidencePlaceholder">No photo attached yet</p>
+          </div>
+          <div class="evidence__controls">
+            <button type="button" class="btn btn--outline" id="startCameraBtn">Open camera</button>
+            <button type="button" class="btn btn--outline" id="captureBtn" hidden>Capture photo</button>
+            <button type="button" class="btn btn--ghost" id="retakeBtn" hidden>Retake</button>
+            <label class="btn btn--outline" for="fileUpload">Upload from device</label>
+            <input type="file" id="fileUpload" accept="image/*" hidden />
+          </div>
+          <p class="evidence__hint" id="cameraHint"></p>
+        </div>
+      </fieldset>
+
+      <div class="form-submit">
+        <button type="submit" class="btn btn--primary" id="submitBtn">Submit complaint</button>
+        <span class="form-msg" id="formMsg"></span>
+      </div>
+    </form>
+
+    <!-- Confirmation card -->
+    <div class="confirm-card" id="confirmCard" hidden>
+      <h3>Complaint registered</h3>
+      <p>Your tracking ID is</p>
+      <p class="confirm-card__id" id="confirmTrackingId"></p>
+      <p class="confirm-card__note">Save this ID — you'll need it to check your complaint status.</p>
+      <button class="btn btn--outline" id="newComplaintBtn">File another complaint</button>
+    </div>
+  </section>
+
+  <!-- ===== TRACK STATUS ===== -->
+  <section class="panel" id="panel-track" data-panel hidden>
+    <div class="panel__intro">
+      <h2>Track your complaint</h2>
+      <p>Enter the tracking ID you received when you filed your complaint (format: GCMS-2026-A1B2C3).</p>
+    </div>
+    <form id="trackForm" class="track-form">
+      <input type="text" id="trackingIdInput" placeholder="GCMS-2026-A1B2C3" required />
+      <button type="submit" class="btn btn--primary">Track</button>
+    </form>
+    <div id="trackResult"></div>
+  </section>
+
+  <!-- ===== ADMIN ===== -->
+  <section class="panel" id="panel-admin" data-panel hidden>
+
+    <div id="adminLoginBlock">
+      <div class="panel__intro">
+        <h2>Staff login</h2>
+        <p>Authorised municipal staff only. Default seeded credentials are shown in the backend console on first run.</p>
+      </div>
+      <form id="loginForm" class="login-form">
+        <div class="field">
+          <label for="loginUser">Username</label>
+          <input type="text" id="loginUser" required />
+        </div>
+        <div class="field">
+          <label for="loginPass">Password</label>
+          <input type="password" id="loginPass" required />
+        </div>
+        <button type="submit" class="btn btn--primary">Log in</button>
+        <span class="form-msg" id="loginMsg"></span>
+      </form>
+    </div>
+
+    <div id="adminDashboard" hidden>
+      <div class="dash-head">
+        <div>
+          <h2>Complaint dashboard</h2>
+          <p id="adminWelcome"></p>
+        </div>
+        <button class="btn btn--ghost" id="logoutBtn">Log out</button>
+      </div>
+
+      <div class="stat-row" id="statRow"></div>
+
+      <div class="filter-row">
+        <input type="text" id="searchInput" placeholder="Search name, tracking ID, description…" />
+        <select id="filterStatus">
+          <option value="">All statuses</option>
+          <option>Submitted</option>
+          <option>Under Review</option>
+          <option>In Progress</option>
+          <option>Resolved</option>
+          <option>Rejected</option>
+        </select>
+        <select id="filterPriority">
+          <option value="">All priorities</option>
+          <option>Low</option>
+          <option>Normal</option>
+          <option>High</option>
+          <option>Urgent</option>
+        </select>
+        <button class="btn btn--outline" id="refreshBtn">Refresh</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="complaint-table">
+          <thead>
+            <tr>
+              <th>Tracking ID</th>
+              <th>Citizen</th>
+              <th>Department</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Filed</th>
+              <th>Evidence</th>
+              <th>Update</th>
+            </tr>
+          </thead>
+          <tbody id="complaintTableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- ===== MAP VIEW ===== -->
+      <div class="map-section">
+        <div class="dash-head">
+          <div>
+            <h2>Complaint map</h2>
+            <p>Complaints that included a location tag, plotted geographically.</p>
+          </div>
+        </div>
+        <div id="complaintMap"></div>
+        <p class="evidence__hint" id="mapHint"></p>
+      </div>
+
+      <!-- ===== STAFF ACCOUNTS ===== -->
+      <div class="staff-section">
+        <div class="dash-head">
+          <div>
+            <h2>Staff accounts</h2>
+            <p>Government employees who can log in and manage complaints.</p>
+          </div>
+        </div>
+
+        <form id="addStaffForm" class="add-staff-form">
+          <input type="text" id="newStaffUser" placeholder="New username" required />
+          <input type="password" id="newStaffPass" placeholder="Password (min 6 chars)" required minlength="6" />
+          <button type="submit" class="btn btn--outline">Add staff account</button>
+          <span class="form-msg" id="staffMsg"></span>
+        </form>
+
+        <div class="table-wrap">
+          <table class="complaint-table">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Added on</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="staffTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="gov-footer">
+  <p>Nagrik Seva Grievance Portal — a public-service demo interface. Not affiliated with any government body.</p>
+</footer>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lightbox__close" id="lightboxClose" aria-label="Close">&times;</button>
+  <img id="lightboxImg" alt="Complaint evidence" />
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="app.js"></script>
+</body>
+</html>
