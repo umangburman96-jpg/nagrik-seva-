@@ -12,6 +12,7 @@ const rateLimit = require("express-rate-limit");
 const db = require("./db");
 
 const app = express();
+app.set("trust proxy", 1);
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
 
