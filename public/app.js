@@ -25,22 +25,7 @@ tabs.forEach((tab) => {
 });
 
 // ---------------------------------------------------------------
-// API connection check
-// ---------------------------------------------------------------
-async function checkApi() {
-  const dot = document.getElementById("apiDot");
-  const text = document.getElementById("apiStatusText");
-  try {
-    const res = await fetch(`${API_BASE}/health`);
-    if (!res.ok) throw new Error();
-    dot.classList.add("ok");
-    text.textContent = "Backend connected";
-  } catch {
-    dot.classList.add("bad");
-    text.textContent = "Backend unreachable — start the server";
-  }
-}
-checkApi();
+// API connection check (disabled)
 
 // ---------------------------------------------------------------
 // Priority segmented control
